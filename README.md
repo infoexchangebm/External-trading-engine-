@@ -12,8 +12,7 @@ Production-grade automated trading engine built with FastAPI.
 - Extensible architecture
 
 ## GitHub Repository
-https://github.com/YOUR_USERNAME/external-trading-engine
-
+(https://github.com/infoexchangebm/External-trading-engine-)
 ## Quick Start (VPS)
 
 ```bash
