@@ -17,7 +17,7 @@ https://github.com/infoexchangebm/External-trading-engine-
 ## Quick Start (VPS)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/external-trading-engine.git
+git clone https://github.com/infoexchangebm/External-trading-engine.git
 cd external-trading-engine
 python -m venv venv
 source venv/bin/activate
