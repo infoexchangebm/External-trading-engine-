@@ -1,59 +1,59 @@
 /**
- * Semantic design tokens for the mobile app.
- *
- * These tokens mirror the naming conventions used in web artifacts (index.css)
- * so that multi-artifact projects share a cohesive visual identity.
- *
- * Replace the placeholder values below with values that match the project's
- * brand. If a sibling web artifact exists, read its index.css and convert the
- * HSL values to hex so both artifacts use the same palette.
- *
- * To add dark mode, add a `dark` key with the same token names.
- * The useColors() hook will automatically pick it up.
+ * Design tokens — dark trading terminal theme.
+ * Mirrored from trading-engine index.css .dark variables (HSL → hex).
  */
-
 const colors = {
-  light: {
-    // Legacy aliases (kept for backward compatibility)
-    text: '#0a0a0a',
-    tint: '#2f95dc',
+  dark: {
+    // Legacy aliases
+    text: '#f5f8fa',
+    tint: '#3b82f6',
 
     // Core surfaces
-    background: '#ffffff',
-    foreground: '#0a0a0a',
+    background: '#0e141f',
+    foreground: '#f5f8fa',
 
     // Cards / elevated surfaces
-    card: '#f9f9f9',
-    cardForeground: '#0a0a0a',
+    card: '#131c30',
+    cardForeground: '#f5f8fa',
+    cardBorder: '#252f42',
 
-    // Primary action color (buttons, links, active states)
-    primary: '#2f95dc',
-    primaryForeground: '#ffffff',
+    // Primary (blue)
+    primary: '#3b82f6',
+    primaryForeground: '#f5f8fa',
 
-    // Secondary / less-emphasis interactive surfaces
-    secondary: '#f0f0f0',
-    secondaryForeground: '#1a1a1a',
+    // Secondary
+    secondary: '#1a2438',
+    secondaryForeground: '#f5f8fa',
 
-    // Muted / subdued elements (dividers, timestamps, placeholders)
-    muted: '#f0f0f0',
-    mutedForeground: '#737373',
+    // Muted
+    muted: '#1a2438',
+    mutedForeground: '#6b7a99',
 
-    // Accent highlights (badges, selected items, focus rings)
-    accent: '#f0f0f0',
-    accentForeground: '#1a1a1a',
+    // Accent
+    accent: '#252f42',
+    accentForeground: '#f5f8fa',
 
-    // Destructive actions (delete, error states)
+    // Semantic
+    success: '#22c55e',
+    successForeground: '#f5f8fa',
     destructive: '#ef4444',
-    destructiveForeground: '#ffffff',
+    destructiveForeground: '#f5f8fa',
+    warning: '#f59e0b',
+    warningForeground: '#0e141f',
 
-    // Borders and input outlines
-    border: '#e5e5e5',
-    input: '#e5e5e5',
+    // Borders / inputs
+    border: '#252f42',
+    input: '#1a2438',
+
+    // Chart colors
+    chart1: '#3b82f6',
+    chart2: '#22c55e',
+    chart3: '#f59e0b',
+    chart4: '#a855f7',
+    chart5: '#ef4444',
   },
-
-  // Border radius (in px). Sync from the sibling web artifact's --radius
-  // CSS variable. This value applies to cards, buttons, inputs, and modals.
-  radius: 8,
+  radius: 10,
 };
 
+export type ColorTokens = typeof colors.dark;
 export default colors;

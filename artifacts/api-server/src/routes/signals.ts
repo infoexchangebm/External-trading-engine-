@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { db, signalsTable } from "@workspace/db";
+import { db, signalsTable, engineConfigTable, webhookLogsTable } from "@workspace/db";
 import { desc, eq, and, sql } from "drizzle-orm";
 import {
   ListSignalsQueryParams,
@@ -8,11 +8,11 @@ import {
   GenerateSignalResponse,
   GetSignalSummaryResponse,
 } from "@workspace/api-zod";
-import { generateSignal } from "../lib/strategy-engine";
-import { fetchOrderbook } from "../lib/orderbook-fetcher";
-import { fetchMacroData } from "../lib/macro-fetcher";
-import { sendToTradingView } from "../lib/tradingview-sender";
-import { engineConfigTable, webhookLogsTable } from "@workspace/db";
+import { generateSignal } from "../lib/engine/strategy-engine.js";
+import { fetchTechnicalMetrics } from "../lib/engine/technical-fetcher.js";
+import { fetchOrderbookForSymbol } from "../lib/engine/orderbook-fetcher.js";
+import { fetchMacroData } from "../lib/engine/macro-fetcher.js";
+import { sendToTradingView } from "../lib/engine/tradingview-sender.js";
 
 const router: IRouter = Router();
 
@@ -98,41 +98,47 @@ router.post("/signals/generate", async (req, res): Promise<void> => {
         earnings: config.earningsWeight,
         technical: config.technicalWeight,
         threshold: config.signalThreshold,
+        atrSlMultiplier: config.atrSlMultiplier ?? 1.5,
+        atrTpMultiplier: config.atrTpMultiplier ?? 3.0,
       }
     : {};
 
-  // Fetch live data
-  const [macro, orderbookEntries] = await Promise.all([
-    fetchMacroData().catch(() => null),
-    fetchOrderbook([symbol]).catch(() => []),
+  // Fetch live market data concurrently
+  const [technical, liquidity, macro] = await Promise.all([
+    fetchTechnicalMetrics(symbol).catch(() => undefined),
+    fetchOrderbookForSymbol(symbol).catch(() => undefined),
+    fetchMacroData().catch(() => undefined),
   ]);
-
-  const orderbookMap: Record<string, { imbalance: number; signal: string }> = {};
-  for (const entry of orderbookEntries) {
-    orderbookMap[entry.symbol] = { imbalance: entry.imbalance, signal: entry.signal };
-  }
 
   const signal = generateSignal(
     symbol,
     {
-      macro: macro ?? undefined,
-      orderbook: orderbookMap,
+      technical,
+      liquidity,
+      macro,
     },
     weights,
   );
 
-  // Persist signal
+  // Persist signal to database
   const [saved] = await db
     .insert(signalsTable)
     .values({
+      signalId: signal.id,
       symbol: signal.symbol,
       finalSignal: signal.finalSignal,
       confidence: signal.confidence,
+      score: signal.score,
+      stopLoss: signal.stopLoss,
+      takeProfit: signal.takeProfit,
+      dataConfidence: signal.dataConfidence,
+      rsi: signal.metrics.rsi,
+      macdHist: signal.metrics.macdHist,
+      emaTrend: signal.metrics.emaTrend,
       macroSignal: signal.macroSignal,
       orderbookSignal: signal.orderbookSignal,
       earningsSignal: signal.earningsSignal,
       technicalSignal: signal.technicalSignal,
-      score: signal.score,
       sentToTradingView: false,
     })
     .returning();
