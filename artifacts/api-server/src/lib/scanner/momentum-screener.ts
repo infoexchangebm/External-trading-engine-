@@ -38,7 +38,7 @@ async function getCikMap(): Promise<Record<string, string>> {
       signal: AbortSignal.timeout(10000),
     });
     if (!res.ok) return cikMapCache ?? {};
-    const data = await res.json();
+    const data = (await res.json()) as Record<string, any>;
     const map: Record<string, string> = {};
     for (const item of Object.values(data) as any[]) {
       map[(item.ticker as string).toUpperCase()] = String(item.cik_str).padStart(10, "0");
@@ -62,7 +62,7 @@ async function getFloatSharesFromEdgar(symbol: string): Promise<number | null> {
       signal: AbortSignal.timeout(10000),
     });
     if (!res.ok) return null;
-    const data = await res.json();
+    const data = (await res.json()) as Record<string, any>;
 
     const units: any[] | undefined =
       data?.facts?.["us-gaap"]?.["CommonStockSharesOutstanding"]?.units?.shares;

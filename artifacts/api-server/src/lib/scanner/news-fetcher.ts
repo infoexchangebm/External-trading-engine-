@@ -107,7 +107,7 @@ export async function fetchNews(symbols: string[]): Promise<NewsItem[]> {
         });
 
         if (res.ok) {
-          const data = await res.json();
+          const data = (await res.json()) as Record<string, any>;
           const hits: any[] = data?.hits?.hits ?? [];
           for (const hit of hits.slice(0, 3)) {
             const src = hit._source ?? {};
@@ -136,7 +136,7 @@ export async function fetchNews(symbols: string[]): Promise<NewsItem[]> {
         const fdaUrl = `https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:"${symbol}"&limit=2&sort=receivedate:desc`;
         const res = await fetch(fdaUrl, { signal: AbortSignal.timeout(6000) });
         if (res.ok) {
-          const data = await res.json();
+          const data = (await res.json()) as Record<string, any>;
           const events: any[] = data?.results ?? [];
           for (const ev of events) {
             results.push({
