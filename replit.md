@@ -37,7 +37,7 @@ A full-stack automated trading engine dashboard. Monitors multi-signal trade dec
 - TradingView integration is bidirectional: inbound alerts POST to `/api/webhook/tradingview`, outbound signals send to the configured webhook URL
 - All webhook events (inbound and outbound) are logged to `webhook_logs` table for debugging
 - Engine config (symbols, weights, threshold, auto-send) lives in the DB so it survives restarts and is editable from the Settings page
-- Technical signal currently uses a placeholder until live price data is wired in (see task backlog)
+- Technical signal uses live price data (Binance and Yahoo Finance) to compute RSI, MACD, EMA trends, and ATR values for dynamic stops/targets.
 
 ## Product
 
